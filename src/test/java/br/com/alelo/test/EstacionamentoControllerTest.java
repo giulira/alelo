@@ -25,6 +25,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 
@@ -47,32 +49,25 @@ public class EstacionamentoControllerTest {
 	}
 	
     @Test
-    public void incluirVagaTestRetornoOK() throws Exception  {
-    	String inputJson = retornoMockAPiJSOn();
+    public void incluirVagaTestRetornoOK() throws Exception {
+    	List<Vaga> vagas = retornoMockAPI();
+    	
+    	for(Vaga v : vagas) {
+    		
+    	String inputJson = mapToJson(v);    	
     	   MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/estacionamento/incluirVaga")
     	      .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson)).andReturn();
     	   int status = mvcResult.getResponse().getStatus();
     	   assertEquals(201, status);
+    	}
     }
     
-    public String retornoMockAPiJSOn()  throws MalformedURLException, IOException {
-        String url = "http://5fcd396c603c0c001648776a.mockapi.io/estacionamento/incluirVaga/vaga";
-        HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
-        conn.setRequestMethod("GET");
-        conn.setRequestProperty("Accept", "application/json");
-        if (conn.getResponseCode() != 200) {
-            System.out.println("Erro " + conn.getResponseCode() + " ao obter dados da URL " + url);
-        }
-        BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
-        String output = "";
-        String line;
-        while ((line = br.readLine()) != null) {
-            output += line;
-        }
-        conn.disconnect();
-        return output;
-    }
     
+    
+    protected String mapToJson(Object obj) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.writeValueAsString(obj);
+     }
     public List<Vaga> retornoMockAPI() throws MalformedURLException, IOException {
     	//Para esta tarefa foi utilizado https://mockapi.io/
         String url = "http://5fcd396c603c0c001648776a.mockapi.io/estacionamento/incluirVaga/vaga";
