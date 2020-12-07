@@ -1,6 +1,7 @@
 package br.com.alelo.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -26,9 +27,11 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
+import com.google.gson.JsonParseException;
 
 import br.com.alelo.StartSpringApp;
 import br.com.alelo.dto.Vaga;
@@ -62,7 +65,19 @@ public class EstacionamentoControllerTest {
     	}
     }
     
+    @Test
+    public void listarVagaTest() throws Exception {
     
+    	 MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/estacionamento/listarVaga")
+    	         .accept(MediaType.APPLICATION_JSON_VALUE)).andReturn();
+    	 
+    	 int status = mvcResult.getResponse().getStatus();
+         assertEquals(200, status);
+         String content = mvcResult.getResponse().getContentAsString();
+         Vaga[] vagaList = mapFromJson(content, Vaga[].class);
+         assertTrue(vagaList.length > 0);
+    	 
+    }
     
     protected String mapToJson(Object obj) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -97,4 +112,11 @@ public class EstacionamentoControllerTest {
         
         return vagas;
     }
+    
+    protected <T> T mapFromJson(String json, Class<T> clazz)
+    	      throws JsonParseException, JsonMappingException, IOException {
+    	      
+    ObjectMapper objectMapper = new ObjectMapper();
+  	return objectMapper.readValue(json, clazz);
+  }
  }
