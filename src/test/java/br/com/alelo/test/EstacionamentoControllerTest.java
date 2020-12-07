@@ -66,6 +66,15 @@ public class EstacionamentoControllerTest {
     }
     
     @Test
+    public void removerVaga() throws Exception {
+    	 MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.delete("/estacionamento/removerVaga?id=2")).andReturn();
+    	   int status = mvcResult.getResponse().getStatus();
+    	   assertEquals(200, status);
+    	   String content = mvcResult.getResponse().getContentAsString();
+    	   assertEquals(content, "Vaga removida.");
+    	}
+
+    @Test
     public void listarVagaTest() throws Exception {
     
     	 MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/estacionamento/listarVaga")

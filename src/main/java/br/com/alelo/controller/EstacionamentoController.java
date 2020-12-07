@@ -30,7 +30,7 @@ public class EstacionamentoController {
 	}
 	
 	@RequestMapping(value = "/removerVaga", method = RequestMethod.DELETE)
-	public ResponseEntity<Object> removerVaga(@RequestBody Long id){
+	public ResponseEntity<Object> removerVaga(@RequestParam(name="id") Long id){
 		service.removerVaga(id);
 		return new ResponseEntity<>("Vaga removida.", HttpStatus.OK); 
 	}
